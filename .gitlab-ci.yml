@@ -53,4 +53,4 @@ deploy_staging:
     - gem install dpl
   script:  
     - dpl --provider=heroku --app=$HEROKU_APP_NAME_STAGING --api-key=$HEROKU_API_KEY
-    - echo "Deployed to production"
+    - echo "Deployed to production(heroku)"
