@@ -1,13 +1,14 @@
 import chai from "chai";
 import request from "supertest";
 const mongoose = require("mongoose");
-import Movie from "../../../../api/movies/movieModel";
 import api from "../../../../index";
-import movies from "../../../../seedData/movies";
+import User from "../../../../api/users/userModel";
 
 const expect = chai.expect;
 let db;
-
+let usertoken;
+//Avatar movie id.
+const avatar = 76600;
 describe("Movies endpoint", () => {
   before(() => {
     mongoose.connect(process.env.MONGO_DB, {
@@ -27,8 +28,11 @@ describe("Movies endpoint", () => {
 
   beforeEach(async () => {
     try {
-      await Movie.deleteMany();
-      await Movie.collection.insertMany(movies);
+      await User.deleteMany();
+      await request(api).post("/api/users?action=register").send({
+        username: "user1",
+        password: "test1"
+      });
     } catch (err) {
       console.error(`failed to Load user Data: ${err}`);
     }
@@ -36,46 +40,70 @@ describe("Movies endpoint", () => {
   afterEach(() => {
     api.close(); // Release PORT 8080
   });
-  describe("GET /api/movies ", () => {
-    it("should return 20 movies and a status 200", (done) => {
+
+  describe("GET /api/movies/discover ", () => {
+      it("should return a 200 status and a bearer token", () => {
+        return request(api)
+          .post("/api/users")
+          .send({
+            username: "user1",
+            password: "test1"
+          })
+          .expect(200)
+
+          .then((res) => {
+            expect(res.body.success).to.be.true;
+            usertoken = res.body.token.substring(7);
+          });
+        });
+
+    it("should return 20 discover movies and a status 200", (done) => {
       request(api)
-        .get("/api/movies")
+        .get("/api/movies/discover/")
+        .set({ "Authorization": `Bearer ${usertoken}` })
         .set("Accept", "application/json")
         .expect("Content-Type", /json/)
         .expect(200)
-        .end((err, res) => {
-          expect(res.body).to.be.a("array");
-          expect(res.body.length).to.equal(20);
+        .then((res) => {
+          expect(res.body).to.be.a("object");
+          expect(res.body.results.length).to.equal(20);
           done();
         });
     });
   });
+  describe("GET /api/movies/:id ", () => {
 
-  describe("GET /api/movies/:id", () => {
-    describe("when the id is valid", () => {
-      it("should return the matching movie", () => {
-        return request(api)
-          .get(`/api/movies/${movies[0].id}`)
+    it("should return the title of the movie and a status 200", (done) => {
+      request(api)
+        .get(`/api/movies/${avatar}`)
+        .set({ "Authorization": `Bearer ${usertoken}` })
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then((res) => {
+          expect(res.body).to.be.a("object");
+          expect(res.body.title).to.equal("Avatar: The Way of Water");
+          done();
+        });
+    });
+
+    });
+
+    describe("GET /api/movies/reviews/:id ", () => {
+
+      it("should make sure reviews are being returned and a status 200", (done) => {
+        request(api)
+          .get(`/api/movies/reviews/${avatar}`)
+          .set({ "Authorization": `Bearer ${usertoken}` })
           .set("Accept", "application/json")
           .expect("Content-Type", /json/)
           .expect(200)
           .then((res) => {
-            expect(res.body).to.have.property("title", movies[0].title);
+            expect(res.body).to.be.a("object");
+           // expect(res.body.results).to.have.property("content");
+            done();
           });
       });
-    });
-    describe("when the id is invalid", () => {
-      it("should return the NOT found message", () => {
-        return request(api)
-          .get("/api/movies/9999")
-          .set("Accept", "application/json")
-          .expect("Content-Type", /json/)
-          .expect(404)
-          .expect({
-            status_code: 404,
-            message: "The resource you requested could not be found.",
-          });
+  
       });
-    });
   });
-});
