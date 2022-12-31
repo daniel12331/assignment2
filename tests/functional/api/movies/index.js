@@ -57,7 +57,7 @@ describe("Movies endpoint", () => {
           });
         });
 
-    it("should return 20 discover movies and a status 200", (done) => {
+    it("should return 20 discover movies and a status 200", () => {
       request(api)
         .get("/api/movies/discover/")
         .set({ "Authorization": `Bearer ${usertoken}` })
@@ -67,13 +67,12 @@ describe("Movies endpoint", () => {
         .then((res) => {
           expect(res.body).to.be.a("object");
           expect(res.body.results.length).to.equal(20);
-          done();
         });
     });
   });
   describe("GET /api/movies/:id ", () => {
 
-    it("should return the title of the movie and a status 200", (done) => {
+    it("should return the title of the movie and a status 200", () => {
       request(api)
         .get(`/api/movies/${avatar}`)
         .set({ "Authorization": `Bearer ${usertoken}` })
@@ -83,7 +82,6 @@ describe("Movies endpoint", () => {
         .then((res) => {
           expect(res.body).to.be.a("object");
           expect(res.body.title).to.equal("Avatar: The Way of Water");
-          done();
         });
     });
 
@@ -91,7 +89,7 @@ describe("Movies endpoint", () => {
 
     describe("GET /api/movies/reviews/:id ", () => {
 
-      it("should make sure reviews are being returned and a status 200", (done) => {
+      it("should make sure reviews are being returned and a status 200", () => {
         request(api)
           .get(`/api/movies/reviews/${avatar}`)
           .set({ "Authorization": `Bearer ${usertoken}` })
@@ -100,8 +98,7 @@ describe("Movies endpoint", () => {
           .expect(200)
           .then((res) => {
             expect(res.body).to.be.a("object");
-           // expect(res.body.results).to.have.property("content");
-            done();
+           expect(res.body.results).to.have.property("content");
           });
       });
   
