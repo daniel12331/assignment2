@@ -19,7 +19,7 @@ describe("Users endpoint", () => {
 
   after(async () => {
     try {
-      await db.dropDatabase();
+     // await db.dropDatabase();
     } catch (error) {
       console.log(error);
     }
