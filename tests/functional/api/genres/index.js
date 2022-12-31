@@ -7,9 +7,9 @@ import User from "../../../../api/users/userModel";
 const expect = chai.expect;
 let db;
 let usertoken;
-//Avatar movie id.
-const avatar = 76600;
-describe("Movies endpoint", () => {
+//Chris pine actor id
+const chrispine = 62064;
+describe("Genres endpoint", () => {
   before(() => {
     mongoose.connect(process.env.MONGO_DB, {
       useNewUrlParser: true,
@@ -41,7 +41,10 @@ describe("Movies endpoint", () => {
     api.close(); // Release PORT 8080
   });
 
-  describe("GET /api/movies/discover ", () => {
+
+  
+
+  describe("GET /api/genres/:movies ", () => {
       it("should return a 200 status and a bearer token", () => {
         return request(api)
           .post("/api/users")
@@ -57,53 +60,35 @@ describe("Movies endpoint", () => {
           });
         });
 
-    it("should return 20 discover movies and a status 200", (done) => {
+    it("should return all the movie genres and a status 200", (done) => {
       request(api)
-        .get("/api/movies/discover/")
+        .get(`/api/genres/${"movie"}`)
         .set({ "Authorization": `Bearer ${usertoken}` })
         .set("Accept", "application/json")
         .expect("Content-Type", /json/)
         .expect(200)
         .then((res) => {
-          expect(res.body).to.be.a("object");
-          expect(res.body.results.length).to.equal(20);
+          expect(res.body.genres).to.be.a("array");
+          expect(res.body.genres.length).to.equal(19);
           done()
         });
     });
   });
-  describe("GET /api/movies/:id ", () => {
 
-    it("should return the title of the movie and a status 200", (done) => {
-      request(api)
-        .get(`/api/movies/${avatar}`)
-        .set({ "Authorization": `Bearer ${usertoken}` })
-        .set("Accept", "application/json")
-        .expect("Content-Type", /json/)
-        .expect(200)
-        .then((res) => {
-          expect(res.body).to.be.a("object");
-          expect(res.body.title).to.equal("Avatar: The Way of Water");
-          done()
-        });
-    });
-
-    });
-
-    describe("GET /api/movies/reviews/:id ", () => {
-
-      it("should make sure reviews are being returned and a status 200", (done) => {
-        request(api)
-          .get(`/api/movies/reviews/${avatar}`)
-          .set({ "Authorization": `Bearer ${usertoken}` })
-          .set("Accept", "application/json")
-          .expect("Content-Type", /json/)
-          .expect(200)
-          .then((res) => {
-            expect(res.body).to.be.a("object");
-           expect(res.body.results[0]).to.have.property("content");
-           done()
-          });
+  describe("GET /api/genres/:tv", () => {
+  it("should return all the tvshow genres and a status 200", (done) => {
+    request(api)
+      .get(`/api/genres/${"tv"}`)
+      .set({ "Authorization": `Bearer ${usertoken}` })
+      .set("Accept", "application/json")
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.genres).to.be.a("array");
+        expect(res.body.genres.length).to.equal(16);
+        done()
       });
-  
-      });
+  });
+});
+
   });

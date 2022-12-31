@@ -60,7 +60,7 @@ describe("Actors endpoint", () => {
           });
         });
 
-    it("should return 20 actors and a status 200", () => {
+    it("should return 20 actors and a status 200", (done) => {
       request(api)
         .get(`/api/actor/page/${1}`)
         .set({ "Authorization": `Bearer ${usertoken}` })
@@ -68,15 +68,16 @@ describe("Actors endpoint", () => {
         .expect("Content-Type", /json/)
         .expect(200)
         .then((res) => {
-          expect(res.body).to.be.a("object");
+          expect(res.body.results).to.be.a("array");
           expect(res.body.results.length).to.equal(20);
+          done()
         });
     });
   });
 
   describe("GET /api/actor/:id ", () => {
 
-  it("should get Chris Pine the actor and a status 200", () => {
+  it("should get Chris Pine the actor and a status 200", (done) => {
     request(api)
       .get(`/api/actor/${chrispine}`)
       .set({ "Authorization": `Bearer ${usertoken}` })
@@ -86,13 +87,14 @@ describe("Actors endpoint", () => {
       .then((res) => {
         expect(res.body).to.be.a("object");
         expect(res.body.name).to.equal("Chris Pine");
+        done()
       });
   });
 });
 
 describe("GET /api/actor/credits/:id ", () => {
 
-    it("get Chris Pines credits (Blind Dating) and a status 200", () => {
+    it("get Chris Pines credits (Blind Dating) and a status 200", (done) => {
       request(api)
         .get(`/api/actor/credits/${chrispine}`)
         .set({ "Authorization": `Bearer ${usertoken}` })
@@ -100,8 +102,9 @@ describe("GET /api/actor/credits/:id ", () => {
         .expect("Content-Type", /json/)
         .expect(200)
         .then((res) => {
-          expect(res.body).to.be.a("object");
-          expect(res.body.name).to.have.property("title", "Blind Dating");
+          expect(res.body.cast).to.be.a("array");
+          expect(res.body.cast[0].title).to.equal("Blind Dating");
+          done()
         });
     });
   });
