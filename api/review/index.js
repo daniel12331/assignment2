@@ -32,7 +32,8 @@ router.post('/:username/reviews/:movieid',asyncHandler( async  (req, res) => {
         return next();
       }
       if (req.query.action === 'addreview') {
-
+          req.body.author = req.params.username
+          req.body.movieid = req.params.movieid
           req.body.created_at = new Date();
           req.body.updated_at = new Date();
 
