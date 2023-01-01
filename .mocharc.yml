@@ -4,6 +4,7 @@ file:
     - 'tests/functional/api/actors/index.js'
     - 'tests/functional/api/genres/index.js'
     - 'tests/functional/api/review/index.js'
+    - 'tests/functional/api/tvshows/index.js'
 
 require: '@babel/register'
 exit: true
