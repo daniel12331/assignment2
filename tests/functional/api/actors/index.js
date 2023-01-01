@@ -7,9 +7,9 @@ import User from "../../../../api/users/userModel";
 const expect = chai.expect;
 let db;
 let usertoken;
-//Avatar movie id.
-const avatar = 76600;
-describe("Movies endpoint", () => {
+//Chris pine actor id
+const chrispine = 62064;
+describe("Actors endpoint", () => {
   before(() => {
     mongoose.connect(process.env.MONGO_DB, {
       useNewUrlParser: true,
@@ -41,7 +41,10 @@ describe("Movies endpoint", () => {
     api.close(); // Release PORT 8080
   });
 
-  describe("GET /api/movies/discover ", () => {
+
+  
+
+  describe("GET /api/actor/page/:pageNumber ", () => {
       it("should return a 200 status and a bearer token", () => {
         return request(api)
           .post("/api/users")
@@ -57,53 +60,53 @@ describe("Movies endpoint", () => {
           });
         });
 
-    it("should return 20 discover movies and a status 200", (done) => {
+    it("should return 20 actors and a status 200", (done) => {
       request(api)
-        .get("/api/movies/discover/")
+        .get(`/api/actor/page/${1}`)
         .set({ "Authorization": `Bearer ${usertoken}` })
         .set("Accept", "application/json")
         .expect("Content-Type", /json/)
         .expect(200)
         .then((res) => {
-          expect(res.body).to.be.a("object");
+          expect(res.body.results).to.be.a("array");
           expect(res.body.results.length).to.equal(20);
           done()
         });
     });
   });
-  describe("GET /api/movies/:id ", () => {
 
-    it("should return the title of the movie and a status 200", (done) => {
+  describe("GET /api/actor/:id ", () => {
+
+  it("should get Chris Pine the actor and a status 200", (done) => {
+    request(api)
+      .get(`/api/actor/${chrispine}`)
+      .set({ "Authorization": `Bearer ${usertoken}` })
+      .set("Accept", "application/json")
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((res) => {
+        expect(res.body).to.be.a("object");
+        expect(res.body.name).to.equal("Chris Pine");
+        done()
+      });
+  });
+});
+
+describe("GET /api/actor/credits/:id ", () => {
+
+    it("get Chris Pines credits (Blind Dating) and a status 200", (done) => {
       request(api)
-        .get(`/api/movies/${avatar}`)
+        .get(`/api/actor/credits/${chrispine}`)
         .set({ "Authorization": `Bearer ${usertoken}` })
         .set("Accept", "application/json")
         .expect("Content-Type", /json/)
         .expect(200)
         .then((res) => {
-          expect(res.body).to.be.a("object");
-          expect(res.body.title).to.equal("Avatar: The Way of Water");
+          expect(res.body.cast).to.be.a("array");
+          expect(res.body.cast[0].title).to.equal("Blind Dating");
           done()
         });
     });
+  });
 
-    });
-
-    describe("GET /api/movies/reviews/:id ", () => {
-
-      it("should make sure reviews are being returned and a status 200", (done) => {
-        request(api)
-          .get(`/api/movies/reviews/${avatar}`)
-          .set({ "Authorization": `Bearer ${usertoken}` })
-          .set("Accept", "application/json")
-          .expect("Content-Type", /json/)
-          .expect(200)
-          .then((res) => {
-            expect(res.body).to.be.a("object");
-           expect(res.body.results[0]).to.have.property("content");
-           done()
-          });
-      });
-  
-      });
   });
