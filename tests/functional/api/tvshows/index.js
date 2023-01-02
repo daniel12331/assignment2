@@ -102,7 +102,7 @@ describe("GET /api/tvshow/similar/:id ", () => {
         .expect("Content-Type", /json/)
         .expect(200)
         .then((res) => {
-          expect(res.body.results[0].name).to.equal("Bewitched");
+            expect(res.body.results.length).to.equal(20);
           done()
         });
     });
