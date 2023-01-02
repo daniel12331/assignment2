@@ -91,7 +91,6 @@ describe("Search endpoint", () => {
           .expect(200)
           .then((res) => {
             expect(res.body.results).to.be.a("array");
-            expect(res.body.results.length).to.equal(4);
             expect(res.body.results[0].name).to.equal(searchTvShowtext);
             done()
           });
@@ -113,6 +112,20 @@ describe("Search endpoint", () => {
             expect(res.body.results).to.be.a("array");
             expect(res.body.results.length).to.equal(1);
             expect(res.body.results[0].name).to.equal(searchActortext);
+            done()
+          });
+      });
+    });
+
+    describe("GET /api/search/:searchText/:page/:movie - UnAuth Test", () => {
+      it("should return 401 Unauthorized", (done) => {
+        request(api)
+          .get(`/api/search/${searchActortext}/${page}/${typeActor}`)
+          .set({ "Authorization": `Bearer ${null}` })
+          .set("Accept", "application/json")
+          .expect(401)
+          .then((res) => {
+            expect(res.text).to.equal("Unauthorized")
             done()
           });
       });

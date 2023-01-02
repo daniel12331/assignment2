@@ -120,6 +120,6 @@ describe("GET /api/tvshow/similar/:id ", () => {
           done()
         });
     });
-  })
+  });
 
   });
