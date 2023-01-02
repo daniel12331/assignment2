@@ -106,4 +106,18 @@ describe("Movies endpoint", () => {
       });
   
       });
+
+      describe("GET /api/movies/discover - UnAuth Test", () => {
+        it("should return 401 Unauthorized", (done) => {
+          request(api)
+            .get(`/api/movies/discover`)
+            .set({ "Authorization": `Bearer ${null}` })
+            .set("Accept", "application/json")
+            .expect(401)
+            .then((res) => {
+              expect(res.text).to.equal("Unauthorized")
+              done()
+            });
+        });
+      });
   });
