@@ -108,5 +108,18 @@ describe("GET /api/actor/credits/:id ", () => {
         });
     });
   });
+  describe("GET /api/actor/page/:pageNumber - UnAuth Test", () => {
+    it("should return 401 Unauthorized", (done) => {
+      request(api)
+        .get(`/api/actor/page/1`)
+        .set({ "Authorization": `Bearer ${null}` })
+        .set("Accept", "application/json")
+        .expect(401)
+        .then((res) => {
+          expect(res.text).to.equal("Unauthorized")
+          done()
+        });
+    });
+  });
 
   });

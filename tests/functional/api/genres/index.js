@@ -90,5 +90,18 @@ describe("Genres endpoint", () => {
       });
   });
 });
+describe("GET /api/genres/:type - UnAuth Test", () => {
+  it("should return 401 Unauthorized", (done) => {
+    request(api)
+      .get(`/api/genres/tv`)
+      .set({ "Authorization": `Bearer ${null}` })
+      .set("Accept", "application/json")
+      .expect(401)
+      .then((res) => {
+        expect(res.text).to.equal("Unauthorized")
+        done()
+      });
+  });
+});
 
   });
